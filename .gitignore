@@ -1,0 +1,11 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Config files containing sensitive data
+config.json
+
+# Log files
+npm-debug.log
