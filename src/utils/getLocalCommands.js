@@ -6,17 +6,17 @@ module.exports = (exceptions = []) => {
 
   const commandCategories = getAllFiles(
     path.join(__dirname, "..", "commands"),
-    true,
+    true
   );
 
-  for(const commandCategory of commandCategories){
+  for (const commandCategory of commandCategories) {
     const commandFiles = getAllFiles(commandCategory);
-    for(commandFile of commandFiles){
-      const commandObject = require(commandFile)
-      if(exceptions.includes(commandObject.name)){
+    for (commandFile of commandFiles) {
+      const commandObject = require(commandFile);
+      if (exceptions.includes(commandObject.name)) {
         continue;
       }
-      localCommands.push(commandObject)
+      localCommands.push(commandObject);
     }
   }
   return localCommands;
