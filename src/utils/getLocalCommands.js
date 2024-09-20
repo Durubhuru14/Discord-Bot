@@ -6,7 +6,7 @@ module.exports = (exceptions = []) => {
 
   const commandCategories = getAllFiles(
     path.join(__dirname, "..", "commands"),
-    true
+    true,
   );
 
   for (const commandCategory of commandCategories) {
@@ -19,5 +19,6 @@ module.exports = (exceptions = []) => {
       localCommands.push(commandObject);
     }
   }
+  console.log(localCommands);
   return localCommands;
 };
