@@ -16,7 +16,6 @@ module.exports = {
     const targetUserId = interaction.options.get("target-user").value;
     const reason =
       interaction.options.get("reason")?.value || "No reason provided";
-
     await interaction.deferReply();
 
     const targetUser = await interaction.guild.members.fetch(targetUserId);
