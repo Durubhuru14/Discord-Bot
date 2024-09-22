@@ -28,7 +28,7 @@ This project is a Discord bot that interacts with servers and users on Discord. 
 
     ```bash
 
-    git clone https://github.com/your-username/your-bot-repo.git
+    git clone https://github.com/Durubhuru14/Discord-Bot.git
 
     ```
 
