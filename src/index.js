@@ -1,7 +1,8 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
-const eventHandler = require("./handlers/eventHandler");
-//const deleteCommands = require("./utils/deleteCommands");
+const { CommandKit } = require('commandkit');
+const path = require('path');
+const {server, devs} = require("../config.json")
 
 const client = new Client({
   intents: [
@@ -12,12 +13,12 @@ const client = new Client({
   ],
 });
 
-eventHandler(client);
-
-// Code for deleting all commands
-//client.on("ready", async (client) => {
-//  console.log(`Logged in as ${client.user.tag}`);
-//  deleteCommands(client);
-//});
+new CommandKit({
+  client,
+  commandsPath: path.join(__dirname, 'commands'),
+  eventsPath: path.join(__dirname, 'events'),
+  devGuildIds: server,
+  devUserIds: devs,
+});
 
 client.login(process.env.TOKEN);
