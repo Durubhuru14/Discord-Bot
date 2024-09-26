@@ -4,6 +4,7 @@ const {
   ApplicationCommandOptionType,
   EmbedBuilder,
   SlashCommandBuilder,
+  PermissionFlagsBits,
 } = require("discord.js");
 
 module.exports = {
@@ -46,4 +47,8 @@ module.exports = {
         .setDescription("The user whose avatar you want to see")
         .setRequired(true),
     ),
+  options: {
+    userPermissions: [PermissionFlagsBits.SendMessages],
+    botPermissions: [PermissionFlagsBits.UseEmbeddedActivities],
+  },
 };
