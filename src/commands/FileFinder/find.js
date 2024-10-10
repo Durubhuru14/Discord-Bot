@@ -16,35 +16,65 @@ module.exports = {
     const subcommandGroup = interaction.options.getSubcommandGroup();
     const subcommand = interaction.options.getSubcommand();
 
-    let responseMessage = "Fetching resource..."; // Placeholder message
+    try {
+      const response = await fetch("https://durubhuru14.github.io/data.json");
+      const data = await response.json();
 
-    // Placeholder logic based on subcommands
-    if (subcommandGroup === "dsa") {
-      switch (subcommand) {
-        case "practical":
-          const practicalNameOrNo = interaction.options.getString(
-            "practical_name_or_no",
-          );
-          responseMessage = `Fetching DSA practicals for: ${practicalNameOrNo}`;
-          break;
-        case "assignment":
-          const assignmentNo = interaction.options.getString("assignment_no");
-          responseMessage = `Fetching DSA assignments for assignment number: ${assignmentNo}`;
-          break;
-        case "notes":
-          const notes = interaction.options.getString("notes");
-          responseMessage = `Fetching DSA notes: ${notes}`;
-          break;
-        default:
-          responseMessage = "Unknown command!";
+      const subject = data[subcommandGroup];
+      const category = subject[subcommand];
+      const userInput =
+        interaction.options.getString("practical_name_or_no") ||
+        interaction.options.getString("assignment_no") ||
+        interaction.options.getString("notes");
+
+      let resources;
+
+      // If the user input is "all", get all resources in the category
+      if (userInput.toLowerCase() === "all") {
+        resources = category;
+      } else {
+        // Filter resources based on the user input
+        resources = category.filter((item) =>
+          item.name.toLowerCase().includes(userInput.toLowerCase()),
+        );
       }
-    }
 
-    // Send placeholder response
-    await interaction.reply({
-      content: responseMessage,
-      ephemeral: true, // Only visible to the user
-    });
+      // Respond with the found resources or an appropriate message
+      if (resources.length > 0) {
+        const embed = new EmbedBuilder()
+          .setTitle(
+            `${subcommandGroup.toUpperCase()} - ${subcommand.charAt(0).toUpperCase() + subcommand.slice(1)}`,
+          )
+          .setColor(0x00ff00);
+
+        resources.forEach((resource) => {
+          embed.addFields(
+            {
+              name: `Resource: ${resource.name}`,
+              value: `Preview: [Click here](${resource.preview})\nDownload: [Click here](${resource.download})`,
+            },
+            {
+              name: "Last Modified",
+              value: resource.lastModified,
+              inline: true,
+            },
+          );
+        });
+
+        await interaction.reply({ embeds: [embed] });
+      } else {
+        await interaction.reply({
+          content: "Sorry, no resources found for your input.",
+          ephemeral: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      await interaction.reply({
+        content: "An error occurred while fetching the resource.",
+        ephemeral: true,
+      });
+    }
   },
 
   data: new SlashCommandBuilder()
@@ -84,6 +114,38 @@ module.exports = {
               option
                 .setName("notes")
                 .setDescription("Notes of DSA subject")
+                .setRequired(true),
+            ),
+        ),
+    )
+    .addSubcommandGroup((subcommandGroup) =>
+      subcommandGroup
+        .setName("los")
+        .setDescription("Subject: Linear Operating Systems")
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName("assignment")
+            .setDescription("Fetches assignments of LOS")
+            .addStringOption((option) =>
+              option
+                .setName("assignment_no")
+                .setDescription("Assignment number")
+                .setRequired(true),
+            ),
+        ),
+    )
+    .addSubcommandGroup((subcommandGroup) =>
+      subcommandGroup
+        .setName("python")
+        .setDescription("Subject: Python Programming")
+        .addSubcommand((subcommand) =>
+          subcommand
+            .setName("assignment")
+            .setDescription("Fetches assignments of Python")
+            .addStringOption((option) =>
+              option
+                .setName("assignment_no")
+                .setDescription("Assignment number")
                 .setRequired(true),
             ),
         ),
