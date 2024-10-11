@@ -74,7 +74,7 @@ module.exports = {
           // Handle practicals or assignments based on subcommand
           const specificCategory = subject[subcommand];
           if (!specificCategory) {
-            throw new Error(`${subcommand} not found for this subject.`);
+            throw new Error(`${subcommand} not found for this ${subject}.`);
           }
 
           let userInput = "";
@@ -97,6 +97,27 @@ module.exports = {
         }
       } else {
         throw new Error("Invalid command usage.");
+      }
+
+      // Check if resources are empty
+      if (resources.length === 0) {
+        const noResourcesEmbed = new EmbedBuilder()
+          .setTitle("No Resources Found")
+          .setDescription(
+            "Sorry, but there are no resources available for the specified command.",
+          )
+          .setColor(0xff0000) // Red color for errors
+          .setTimestamp()
+          .setFooter({
+            text: `Requested by ${interaction.user.tag}`,
+            iconURL: interaction.user.displayAvatarURL(),
+          });
+
+        await interaction.reply({
+          embeds: [noResourcesEmbed],
+          ephemeral: true,
+        });
+        return; // Exit the function if no resources found
       }
 
       // Create multiple embeds from gathered resources
