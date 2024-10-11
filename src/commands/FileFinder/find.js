@@ -59,6 +59,16 @@ module.exports = {
               resources.push({ title: category, items: [subject[category]] });
             }
           }
+        } else if (subcommand === "notes") {
+          // Handle specific case for notes
+          if (subject.notes && subject.notes.name) {
+            resources.push({
+              title: "Notes",
+              items: [subject.notes],
+            });
+          } else {
+            throw new Error("Notes not available for this subject.");
+          }
         } else {
           // Handle practicals or assignments based on subcommand
           const specificCategory = subject[subcommand];
