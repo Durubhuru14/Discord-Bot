@@ -67,13 +67,14 @@ module.exports = {
               items: [subject.notes],
             });
           } else {
-            throw new Error("Notes not available for this subject.");
+            // Throw error if notes are not found
+            throw new Error("Notes not found for this subject.");
           }
         } else {
           // Handle practicals or assignments based on subcommand
           const specificCategory = subject[subcommand];
           if (!specificCategory) {
-            throw new Error("Invalid subcommand category.");
+            throw new Error(`${subcommand} not found for this subject.`);
           }
 
           let userInput = "";
@@ -127,10 +128,19 @@ module.exports = {
       await interaction.reply({ embeds });
     } catch (error) {
       console.error("Error fetching data:", error);
-      await interaction.reply({
-        content: "An error occurred while fetching the resource.",
-        ephemeral: true,
-      });
+
+      // Custom error message handling
+      const errorEmbed = new EmbedBuilder()
+        .setTitle("Error")
+        .setDescription(error.message) // Display the error message
+        .setColor(0xff0000)
+        .setTimestamp()
+        .setFooter({
+          text: `Requested by ${interaction.user.tag}`,
+          iconURL: interaction.user.displayAvatarURL(),
+        });
+
+      await interaction.reply({ embeds: [errorEmbed], ephemeral: true });
     }
   },
   data: new SlashCommandBuilder()
