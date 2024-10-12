@@ -28,7 +28,7 @@ module.exports = {
 
     if (targetUser.id === interaction.guild.ownerId) {
       await interaction.editReply(
-        "You can't kick that user because they're the server owner.",
+        "You can't ban that user because they're the server owner.",
       );
       return;
     }
@@ -39,46 +39,44 @@ module.exports = {
 
     if (targetUserRolePosition >= requestUserRolePosition) {
       await interaction.editReply(
-        "You can't kick that user because they have the same/higher role than you.",
+        "You can't ban that user because they have the same/higher role than you.",
       );
       return;
     }
 
     if (targetUserRolePosition >= botRolePosition) {
       await interaction.editReply(
-        "I can't kick that user because they have the same/higher role than me.",
+        "I can't ban that user because they have the same/higher role than me.",
       );
       return;
     }
 
-    // kick the targetUser
+    // Ban the targetUser
     try {
-      await targetUser.kick({ reason });
+      await targetUser.ban({ reason });
       await interaction.editReply(
-        `User ${targetUser} was kickned\nReason: ${reason}`,
+        `User ${targetUser} was banned\nReason: ${reason}`,
       );
     } catch (error) {
-      console.log(`There was an error when kickning: ${error}`);
+      console.log(`There was an error when banning: ${error}`);
     }
   },
 
   data: new SlashCommandBuilder()
-    .setName("kick")
-    .setDescription("Kicks the memeber from the server!")
+    .setName("ban")
+    .setDescription("Bans a member from this server")
     .addUserOption((option) =>
       option
         .setName("target-user")
-        .setDescription("The memeber you want to kick from server")
+        .setDescription("The user you want to ban.")
         .setRequired(true),
     )
     .addStringOption((option) =>
-      option
-        .setName("reason")
-        .setDescription("Reason for kickning the member from the server"),
+      option.setName("reason").setDescription("The reason you want to ban."),
     ),
 
   options: {
-    permissionsRequired: [PermissionFlagsBits.KickMembers],
-    botPermissions: [PermissionFlagsBits.KickMembers],
+    userPermissions: [PermissionFlagsBits.BanMembers],
+    botPermissions: [PermissionFlagsBits.BanMembers],
   },
 };
